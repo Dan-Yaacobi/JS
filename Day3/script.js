@@ -3,26 +3,22 @@ const commentArea = document.querySelector(".comment")
 
 submitButton.addEventListener("click", ()=>{
     if (!commentArea.value == ""){
-        const commentSave = createComment(commentArea.value)
-        saveToStorage(commentSave.dataset.id, commentSave.commentText.textContent)
+        const id = crypto.randomUUID()
+        saveToStorage(id,commentArea.value)
+        createComment(commentArea.value,id)
         commentArea.value = ""
     }
 })
-        const commentSave = createComment(commentArea.value)
-        saveToStorage(commentSave.dataset.id, commentArea.value)
+
 window.onload = function(){
     loadFromStorage()
 }
 
-function createComment(text, id=""){
+function createComment(text, id){
     const commentsBoard = document.querySelector(".comments_board")
     const newComment = document.createElement("h2")
-    if (id == ""){
-        newComment.dataset.id = crypto.randomUUID()
-    }
-    else{
-        newComment.dataset.id = id
-    }
+    newComment.dataset.id = id
+
     const commentText = document.createElement("p")
     commentText.textContent = text
     newComment.commentText = commentText
@@ -92,7 +88,8 @@ function createButtons(comment){
 
 }
 
-function saveToStorage(id, value){
+function saveToStorage(id,value){
+    console.log(id)
     localStorage.setItem(id,value)
 }
 
@@ -102,9 +99,11 @@ function deleteFromStorage(id){
 
 function loadFromStorage(){
     for(let i = 0; i< localStorage.length; i++){
+
         const key = localStorage.key(i)
         const value = localStorage.getItem(key)
-
-        createComment(value,key)
+        if (value != "" && key != undefined){
+            createComment(value,key)
+        }
     }
 }
